@@ -13,6 +13,7 @@
 // @grant        GM_xmlhttpRequest
 // @inject-into  content
 // @run-at       document-end
+// @downloadURL  https://raw.githubusercontent.com/qoli/SyncnextUserScriptHelper/main/SyncnextUserscriptHelper.user.js
 // ==/UserScript==
 
 (async function () {
