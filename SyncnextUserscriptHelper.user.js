@@ -19,6 +19,13 @@
 (async function () {
   "use strict";
 
+  const syncnextBody = document.getElementById("_syncnextScript");
+
+  if (syncnextBody != null) {
+    syncnextBody.classList.remove("scriptNotInstalled");
+    syncnextBody.classList.add("scriptInstalled");
+  }
+
   const postURL = document.getElementById("_syncnextURL");
   const pageURL = document.getElementById("_syncnextPageURL");
 
