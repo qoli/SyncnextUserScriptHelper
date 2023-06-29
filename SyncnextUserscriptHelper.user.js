@@ -64,12 +64,7 @@ function getRequest(postURL, url, pageURL) {
     method: "GET",
     url: xmlURL,
     onload: function (res) {
-      console.log("Download finish");
-      console.log(res);
-
-      if (res.status != 200) {
-        // alert("發送給 Syncnext 遇到錯誤" + res.status + " - " + res.statusText);
-      }
+      //
     },
   });
 }
