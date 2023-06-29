@@ -19,33 +19,57 @@
 (async function () {
   "use strict";
 
-  const syncnextBody = document.getElementById("_syncnextScript");
+  GM_xmlhttpRequest({
+    method: "HEAD",
+    url: window.location.href,
+    onload: async function (response) {
+      if (response.status != 200) {
+        const newPostURL = await GM.getValue("postURL", null);
+        console.log("網頁錯誤代碼：" + response.status);
 
-  if (syncnextBody != null) {
-    syncnextBody.classList.remove("scriptNotInstalled");
-    syncnextBody.classList.add("scriptInstalled");
-  }
+        if (newPostURL != null) {
+          getError(newPostURL, response.status);
+        }
 
-  const postURL = document.getElementById("_syncnextURL");
-  const pageURL = document.getElementById("_syncnextPageURL");
-
-  if (postURL != null) {
-    await GM.setValue("postURL", postURL.innerHTML);
-    await GM.setValue("pageURL", pageURL.innerHTML);
-  }
-
-  const videoUrls = document.querySelectorAll("video[src], video source[src]");
-  videoUrls.forEach(async function (video) {
-    const url = video.currentSrc || video.src;
-
-    if (url !== undefined) {
-      const postURL = await GM.getValue("postURL", null);
-      const pageURL = await GM.getValue("pageURL", null);
-
-      if (postURL !== null && pageURL !== null) {
-        getRequest(postURL, url, pageURL);
+        return;
       }
-    }
+
+      const syncnextBody = document.getElementById("_syncnextScript");
+
+      if (syncnextBody != null) {
+        syncnextBody.classList.remove("scriptNotInstalled");
+        syncnextBody.classList.add("scriptInstalled");
+      }
+
+      const postURL = document.getElementById("_syncnextURL");
+      const pageURL = document.getElementById("_syncnextPageURL");
+
+      if (postURL != null && pageURL != null) {
+        await GM.setValue("postURL", postURL.innerHTML);
+        await GM.setValue("pageURL", pageURL.innerHTML);
+      }
+
+      const videoUrls = document.querySelectorAll(
+        "video[src], video source[src]"
+      );
+
+      if (videoUrls.length == 0) {
+        return;
+      }
+
+      videoUrls.forEach(async function (video) {
+        const url = video.currentSrc || video.src;
+
+        if (url !== undefined) {
+          const postURL = await GM.getValue("postURL", null);
+          const pageURL = await GM.getValue("pageURL", null);
+
+          if (postURL !== null && pageURL !== null) {
+            getRequest(postURL, url, pageURL);
+          }
+        }
+      });
+    },
   });
 })();
 
@@ -58,13 +82,20 @@ function getRequest(postURL, url, pageURL) {
     "&video=" +
     encodeURIComponent(url);
 
-  console.log(xmlURL);
+  GM_xmlhttpRequest({
+    method: "GET",
+    url: xmlURL,
+  });
+}
+
+function getError(postURL, text) {
+  const xmlURL = postURL + "/error" + "?error=" + text;
 
   GM_xmlhttpRequest({
     method: "GET",
     url: xmlURL,
     onload: function (res) {
-      //
+      console.log(res.responseText);
     },
   });
 }
