@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         SyncnextUserScriptHelper
+// @name         Syncnext 網頁解釋助手
 // @namespace    http://syncnext_ronnie.com/
 // @version      1.0
-// @description  send video URL to Syncnext tvOS app
+// @description  發送網頁解釋結果給 Syncnext tvOS app
 // @author       Ronnie Wong
 // @match        *://*/*
 // @grant        GM.getValue
@@ -43,15 +43,16 @@
       const pageURL = await GM.getValue("pageURL", null);
 
       if (postURL !== null && pageURL !== null) {
-        formRequest(postURL, url, pageURL);
+        getRequest(postURL, url, pageURL);
       }
     }
   });
 })();
 
-function formRequest(postURL, url, pageURL) {
+function getRequest(postURL, url, pageURL) {
   const xmlURL =
     postURL +
+    "/receiver" +
     "?page=" +
     encodeURIComponent(pageURL) +
     "&video=" +
@@ -62,5 +63,13 @@ function formRequest(postURL, url, pageURL) {
   GM_xmlhttpRequest({
     method: "GET",
     url: xmlURL,
+    onload: function (res) {
+      console.log("Download finish");
+      console.log(res);
+
+      if (res.status != 200) {
+        // alert("發送給 Syncnext 遇到錯誤" + res.status + " - " + res.statusText);
+      }
+    },
   });
 }
