@@ -23,6 +23,7 @@
     method: "HEAD",
     url: window.location.href,
     onload: async function (response) {
+      console.log(response.status);
       if (response.status != 200) {
         const newPostURL = await GM.getValue("postURL", null);
         console.log("網頁錯誤代碼：" + response.status);
